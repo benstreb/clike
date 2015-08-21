@@ -1,6 +1,27 @@
 module Lexer
-    ( someFunc
+    ( Lexer.identifier
+    , Lexer.integer
+    , Lexer.reserved
     ) where
 
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
+import Control.Applicative
+import Text.ParserCombinators.Parsec hiding (many, optional, (<|>))
+import Text.Parsec.Language (javaStyle)
+import Text.Parsec.Token as T
+
+clikeDef :: T.LanguageDef st
+clikeDef = javaStyle
+        { reservedNames = ["fn"]
+        }
+
+lexer :: T.TokenParser st
+lexer = makeTokenParser clikeDef
+
+identifier :: CharParser () String
+identifier = T.identifier lexer
+
+integer :: CharParser () Integer
+integer = T.integer lexer
+
+reserved :: String -> CharParser () ()
+reserved = T.reserved lexer

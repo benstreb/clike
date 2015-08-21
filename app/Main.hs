@@ -3,4 +3,4 @@ module Main where
 import Lexer
 
 main :: IO ()
-main = someFunc
+main = putStrLn "Main function"
