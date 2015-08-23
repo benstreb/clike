@@ -1,10 +1,15 @@
 import Test.Hspec
 import Test.Hspec.QuickCheck
 import Lexer
-import Text.ParserCombinators.Parsec (parse)
+import Text.ParserCombinators.Parsec (parse, ParseError)
 
 main :: IO ()
 main = hspec spec
+
+isError :: Either ParseError a -> Bool
+isError e = case e of
+    Right _ -> False
+    Left _ -> True
 
 spec :: Spec
 spec = do
@@ -12,6 +17,16 @@ spec = do
         let parseIdentifier = parse identifier "(test)"
         it "parses a character" $
             parseIdentifier "a" `shouldBe` Right "a"
+        it "parses a word" $
+            parseIdentifier "abc" `shouldBe` Right "abc"
+        it "doesn't parse a symbol" $
+            parseIdentifier "+" `shouldSatisfy` isError
+        it "stops parsing when it sees a symbol" $
+            parseIdentifier "a+" `shouldBe` Right "a"
+        it "can have digits in an identifier" $
+            parseIdentifier "a1" `shouldBe` Right "a1"
+        it "can't start with digits" $
+            parseIdentifier "1a" `shouldSatisfy` isError
     describe "integer" $ do
         let parseInteger = parse integer "(test)"
         it "parses a positive integer" $
