@@ -31,6 +31,12 @@ spec = do
         let parseInteger = parse integer "(test)"
         it "parses a positive integer" $
             parseInteger "1" `shouldBe` Right 1
+        it "parses a multi-digit integer" $
+            parseInteger "100" `shouldBe` Right 100
+        it "parses a negative integer" $
+            parseInteger "-1" `shouldBe` Right (-1)
+        it "stops parsing when it no longer reads an integer" $
+            parseInteger "1+" `shouldBe` Right 1
     describe "reserved" $ do
         let parseReserved word = parse (reserved word) "(test)"
         it "has fn as a reserved word" $
