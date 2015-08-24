@@ -41,3 +41,7 @@ spec = do
         let parseReserved word = parse (reserved word) "(test)"
         it "has fn as a reserved word" $
             parseReserved "fn" "fn" `shouldBe` Right ()
+        it "it doesn't treat a word starting with fn as a reserved word" $
+            parseReserved "fn" "fn123" `shouldSatisfy` isError
+        it "does treat fn as a reserved word if a symbol follows it" $
+            parseReserved "fn" "fn()" `shouldBe` Right ()
