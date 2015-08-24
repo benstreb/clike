@@ -1,18 +1,27 @@
 import Test.Hspec
 import Test.Hspec.QuickCheck
 import Lexer
+import Parser
 import Text.ParserCombinators.Parsec (parse, ParseError)
 
 main :: IO ()
-main = hspec spec
+main = do
+    hspec lexerSpec
+    hspec parserSpec
 
 isError :: Either ParseError a -> Bool
 isError e = case e of
     Right _ -> False
     Left _ -> True
 
-spec :: Spec
-spec = do
+parserSpec :: Spec
+parserSpec = do
+    describe "root" $ do
+        it "parses a sample program" $
+            parse root "(test)" "value; value2;" `shouldNotSatisfy` isError
+
+lexerSpec :: Spec
+lexerSpec = do
     describe "identifier" $ do
         let parseIdentifier = parse identifier "(test)"
         it "parses a character" $
