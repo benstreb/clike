@@ -19,6 +19,10 @@ parserSpec = do
     describe "root" $ do
         it "parses a sample program" $
             parse root "(test)" "value; value2;" `shouldNotSatisfy` isError
+    describe "expr" $ do
+        let exprParse = parse expr "(test)"
+        it "can have a bare identifier" $
+            exprParse "abc" `shouldBe` Id "abc"
 
 lexerSpec :: Spec
 lexerSpec = do
