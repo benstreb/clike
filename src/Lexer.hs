@@ -2,6 +2,9 @@ module Lexer
     ( Lexer.identifier
     , Lexer.integer
     , Lexer.reserved
+    , Lexer.parens
+    , Lexer.braces
+    , Lexer.comma
     ) where
 
 import Control.Applicative
@@ -25,3 +28,12 @@ integer = T.integer lexer
 
 reserved :: String -> CharParser () ()
 reserved = T.reserved lexer
+
+parens :: CharParser () a -> CharParser () a
+parens = T.parens lexer
+
+braces :: CharParser () a -> CharParser () a
+braces = T.braces lexer
+
+comma :: CharParser () String
+comma = T.comma lexer

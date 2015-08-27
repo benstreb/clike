@@ -2,7 +2,7 @@ import Test.Hspec
 import Test.Hspec.QuickCheck
 import Lexer
 import Parser
-import Text.ParserCombinators.Parsec (parse, ParseError)
+import Text.ParserCombinators.Parsec (parse, ParseError, string)
 
 main :: IO ()
 main = do
@@ -58,3 +58,15 @@ lexerSpec = do
             parseReserved "fn" "fn123" `shouldSatisfy` isError
         it "does treat fn as a reserved word if a symbol follows it" $
             parseReserved "fn" "fn()" `shouldBe` Right ()
+    describe "parens" $ do
+        let parseParens inner = parse (parens inner) "(test)"
+        it "parses parenthesis and returns what's inside them" $
+            parseParens $ string "" "()" `shouldBe` ""
+    describe "braces" $ do
+        let parseParens inner = parse (braces inner) "(test)"
+        it "parses braces and returns what's inside them" $
+            parseParens $ string "" "{}" `shouldBe` ""
+    describe "comma" $ do
+        let parseComma = parse comma "(test)"
+        it "parses a comma" $
+            parseComma "," `shouldBe` ","
