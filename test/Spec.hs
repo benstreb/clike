@@ -22,7 +22,9 @@ parserSpec = do
     describe "expr" $ do
         let exprParse = parse expr "(test)"
         it "can have a bare identifier" $
-            exprParse "abc" `shouldBe` Id "abc"
+            exprParse "abc" `shouldBe` Right (Id "abc")
+        it "can have an empty anonymous function" $
+            exprParse "fn () {}" `shouldBe` Right (Func [] [])
 
 lexerSpec :: Spec
 lexerSpec = do
@@ -61,12 +63,12 @@ lexerSpec = do
     describe "parens" $ do
         let parseParens inner = parse (parens inner) "(test)"
         it "parses parenthesis and returns what's inside them" $
-            parseParens $ string "" "()" `shouldBe` ""
+            parseParens (string "") "()" `shouldBe` Right ""
     describe "braces" $ do
         let parseParens inner = parse (braces inner) "(test)"
         it "parses braces and returns what's inside them" $
-            parseParens $ string "" "{}" `shouldBe` ""
+            parseParens (string "") "{}" `shouldBe` Right ""
     describe "comma" $ do
         let parseComma = parse comma "(test)"
         it "parses a comma" $
-            parseComma "," `shouldBe` ","
+            parseComma "," `shouldBe` Right ","
