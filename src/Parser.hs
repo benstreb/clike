@@ -2,7 +2,7 @@ module Parser
     ( Parser.root
     , Parser.stmt
     , Parser.expr
-    , Parser.ParseTree (Func, Id)
+    , Parser.ParseTree (Expr, Func, Id, Arg)
     ) where
 
 import Control.Applicative
@@ -12,6 +12,7 @@ import Lexer
 data ParseTree = Root [ParseTree]
                | Expr ParseTree
                | Func {args :: [ParseTree], body :: [ParseTree] }
+               | Arg String
                | Id String
                deriving (Show, Eq)
 
@@ -26,4 +27,4 @@ expr = Id <$> identifier
     <|> Func <$> (reserved "fn" *> parens (arg `sepBy` comma)) <*> braces (many stmt)
 
 arg :: CharParser () ParseTree
-arg = Id <$> identifier
+arg = Arg <$> identifier

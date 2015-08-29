@@ -25,6 +25,8 @@ parserSpec = do
             exprParse "abc" `shouldBe` Right (Id "abc")
         it "can have an empty anonymous function" $
             exprParse "fn () {}" `shouldBe` Right (Func [] [])
+        it "can have an anonymous function with an argument" $
+            exprParse "fn (arg) {expr;}" `shouldBe` Right (Func [Arg "arg"] [Expr (Id "expr")])
 
 lexerSpec :: Spec
 lexerSpec = do
