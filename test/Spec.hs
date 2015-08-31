@@ -27,6 +27,10 @@ parserSpec = do
             exprParse "fn () {}" `shouldBe` Right (Func [] [])
         it "can have an anonymous function with an argument" $
             exprParse "fn (arg) {expr;}" `shouldBe` Right (Func [Arg "arg"] [Expr (Id "expr")])
+        it "can be an assignment statement" $
+            exprParse "let a = b" `shouldBe` Right (Assign (Id "a") (Id "b"))
+        it "supports assigning a function" $
+            exprParse "let f = fn() {}" `shouldBe` Right (Assign (Id "f") (Func [] []))
 
 lexerSpec :: Spec
 lexerSpec = do
@@ -62,6 +66,8 @@ lexerSpec = do
             parseReserved "fn" "fn123" `shouldSatisfy` isError
         it "does treat fn as a reserved word if a symbol follows it" $
             parseReserved "fn" "fn()" `shouldBe` Right ()
+        it "has let as a reserved word" $
+            parseReserved "let" "let" `shouldBe` Right ()
     describe "parens" $ do
         let parseParens inner = parse (parens inner) "(test)"
         it "parses parenthesis and returns what's inside them" $

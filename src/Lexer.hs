@@ -2,6 +2,7 @@ module Lexer
     ( Lexer.identifier
     , Lexer.integer
     , Lexer.reserved
+    , Lexer.operator
     , Lexer.parens
     , Lexer.braces
     , Lexer.comma
@@ -14,7 +15,7 @@ import Text.Parsec.Token as T
 
 clikeDef :: T.LanguageDef st
 clikeDef = javaStyle
-        { reservedNames = ["fn"]
+        { reservedNames = ["fn", "let"]
         }
 
 lexer :: T.TokenParser st
@@ -28,6 +29,9 @@ integer = T.integer lexer
 
 reserved :: String -> CharParser () ()
 reserved = T.reserved lexer
+
+operator :: String -> CharParser () ()
+operator = T.reservedOp lexer
 
 parens :: CharParser () a -> CharParser () a
 parens = T.parens lexer
