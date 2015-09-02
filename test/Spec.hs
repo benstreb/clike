@@ -31,6 +31,12 @@ parserSpec = do
             exprParse "let a = b" `shouldBe` Right (Assign (Id "a") (Id "b"))
         it "supports assigning a function" $
             exprParse "let f = fn() {}" `shouldBe` Right (Assign (Id "f") (Func [] []))
+        it "parses a function call" $
+            exprParse "f()" `shouldBe` Right (Call (Id "f") [])
+        it "parses successive function calls" $
+            exprParse "f()()" `shouldBe` Right (Call (Call (Id "f") []) [])
+        it "parses a function call with an argument" $
+            exprParse "f(arg)" `shouldBe` Right (Call (Id "f") [Id "arg"])
 
 lexerSpec :: Spec
 lexerSpec = do
