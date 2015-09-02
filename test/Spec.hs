@@ -26,7 +26,7 @@ parserSpec = do
         it "can have an empty anonymous function" $
             exprParse "fn () {}" `shouldBe` Right (Func [] [])
         it "can have an anonymous function with an argument" $
-            exprParse "fn (arg) {expr;}" `shouldBe` Right (Func [Arg "arg"] [Expr (Id "expr")])
+            exprParse "fn (arg) {expr;}" `shouldBe` Right (Func [Arg "arg"] [Id "expr"])
         it "can be an assignment statement" $
             exprParse "let a = b" `shouldBe` Right (Assign (Id "a") (Id "b"))
         it "supports assigning a function" $
