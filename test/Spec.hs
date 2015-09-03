@@ -37,6 +37,8 @@ parserSpec = do
             exprParse "f()()" `shouldBe` Right (Call (Call (Id "f") []) [])
         it "parses a function call with an argument" $
             exprParse "f(arg)" `shouldBe` Right (Call (Id "f") [Id "arg"])
+        it "parses an if statement" $
+            exprParse "if test {}" `shouldBe` Right (If (Id "test") [])
 
 lexerSpec :: Spec
 lexerSpec = do
