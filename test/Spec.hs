@@ -39,6 +39,8 @@ parserSpec = do
             exprParse "f(arg)" `shouldBe` Right (Call (Id "f") [Id "arg"])
         it "parses an if statement" $
             exprParse "if test {}" `shouldBe` Right (If (Id "test") [])
+        it "parses an integer as a number" $
+            exprParse "3" `shouldBe` Right (Num 3)
 
 lexerSpec :: Spec
 lexerSpec = do

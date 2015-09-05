@@ -2,7 +2,7 @@ module Parser
     ( Parser.root
     , Parser.stmts
     , Parser.expr
-    , Parser.ParseTree (Assign, Func, Arg, Call, If, Id)
+    , Parser.ParseTree (Assign, Func, Arg, Call, If, Id, Num)
     ) where
 
 import Control.Applicative
@@ -16,6 +16,7 @@ data ParseTree = Root [ParseTree]
                | Call {func :: ParseTree, args :: [ParseTree]}
                | If {comp :: ParseTree, body :: [ParseTree]}
                | Id String
+               | Num Integer
                deriving (Show, Eq)
 
 root :: CharParser () ParseTree
@@ -28,6 +29,7 @@ expr :: CharParser () ParseTree
 expr = Func <$> (reserved "fn" *> parens (arg `sepBy` comma)) <*> braces stmts
     <|> Assign <$> (reserved "let" *> (Id <$> identifier)) <*> (operator "=" *> expr)
     <|> If <$> (reserved "if" *> expr) <*> braces stmts
+    <|> num
     <|> call
 
 call :: CharParser () ParseTree
@@ -37,6 +39,9 @@ call = optCall <$> ident <*> many (parens (expr `sepBy` comma))
 
 ident :: CharParser () ParseTree
 ident = Id <$> identifier
+
+num :: CharParser () ParseTree
+num = Num <$> integer
 
 arg :: CharParser () ParseTree
 arg = Arg <$> identifier

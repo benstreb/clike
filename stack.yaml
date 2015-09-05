@@ -21,4 +21,5 @@ extra-deps:
 - tf-random-0.5
 - primitive-0.6
 - stm-2.4.4
+- llvm-general-3.4.5.4
 resolver: ghc-7.10
