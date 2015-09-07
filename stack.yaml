@@ -22,4 +22,9 @@ extra-deps:
 - primitive-0.6
 - stm-2.4.4
 - llvm-general-3.4.5.4
-resolver: ghc-7.10
+- llvm-general-pure-3.4.5.4
+- transformers-compat-0.4.0.4
+- utf8-string-1
+resolver: stable
+docker:
+    enable: true
