@@ -25,6 +25,6 @@ extra-deps:
 - llvm-general-pure-3.4.5.4
 - transformers-compat-0.4.0.4
 - utf8-string-1
-resolver: stable
+resolver: lts-3.0
 docker:
     enable: true
