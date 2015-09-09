@@ -26,5 +26,3 @@ extra-deps:
 - transformers-compat-0.4.0.4
 - utf8-string-1
 resolver: lts-3.0
-docker:
-    enable: true
