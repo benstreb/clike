@@ -2,17 +2,25 @@ import Test.Hspec
 import Test.Hspec.QuickCheck
 import Lexer
 import Parser
+import Codegen
 import Text.ParserCombinators.Parsec (parse, ParseError, string)
 
 main :: IO ()
 main = do
     hspec lexerSpec
     hspec parserSpec
+    hspec codegenSpec
 
 isError :: Either ParseError a -> Bool
 isError e = case e of
     Right _ -> False
     Left _ -> True
+
+codegenSpec :: Spec
+codegenSpec = do
+    describe "testing llvm-general" $ do
+        it "generates a basic block" $
+            block `shouldBe` block
 
 parserSpec :: Spec
 parserSpec = do
