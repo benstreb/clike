@@ -14,16 +14,13 @@ import LLVM.General.Module as CModule
 import LLVM.General.Target
 
 generate :: AST.Module -> IO (Either String ByteString)
-generate m = withContext ctxt
+generate m = withContext $ \context ->
+    joinExcept $ withModuleFromAST context m targetedModule
     where
-        ctxt :: Context -> IO (Either String ByteString)
-        ctxt context = fmap join $ runExceptT $ withModuleFromAST context m targetedModule
-            where
-                targetedModule :: CModule.Module -> IO (Either String ByteString)
-                targetedModule cmodule = fmap join $ runExceptT $ withHostTargetMachine makeModule
-                    where
-                        makeModule :: TargetMachine -> IO (Either String ByteString)
-                        makeModule target = runExceptT $ moduleObject target cmodule
+        joinExcept = fmap join . runExceptT
+        targetedModule :: CModule.Module -> IO (Either String ByteString)
+        targetedModule cmodule = joinExcept $ withHostTargetMachine $ \target ->
+            runExceptT $ moduleObject target cmodule
 
 return0 :: Terminator
 return0 = Ret (Just (ConstantOperand (Int 0 0))) []
