@@ -11,7 +11,7 @@ main = do
     hspec parserSpec
     hspec codegenSpec
 
-isError :: Either ParseError a -> Bool
+isError :: Either a b -> Bool
 isError e = case e of
     Right _ -> False
     Left _ -> True
@@ -19,8 +19,9 @@ isError e = case e of
 codegenSpec :: Spec
 codegenSpec = do
     describe "testing llvm-general" $ do
-        it "generates a basic block" $
-            block `shouldBe` block
+        it "generates a trivial module" $ do
+            generatedModule <- generate Codegen.mod
+            generatedModule `shouldNotSatisfy` isError
 
 parserSpec :: Spec
 parserSpec = do
