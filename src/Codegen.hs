@@ -22,11 +22,11 @@ generate m = withContext $ \context ->
         targetedModule cmodule = joinExcept $ withHostTargetMachine $ \target ->
             runExceptT $ moduleObject target cmodule
 
-return0 :: Terminator
-return0 = Ret (Just (ConstantOperand (Int 0 0))) []
+ret :: Integer -> Terminator
+ret n = Ret (Just (ConstantOperand (Int 64 n))) []
 
 block :: BasicBlock
-block = BasicBlock (Name "block") [] (Do return0)
+block = BasicBlock (Name "block") [] (Do $ ret 0)
 
 func :: Definition
 func = GlobalDefinition $ functionDefaults
