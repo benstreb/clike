@@ -2,6 +2,7 @@ import Test.Hspec
 import Test.Hspec.QuickCheck
 import Lexer
 import Parser
+import qualified IR
 import Codegen
 import Text.ParserCombinators.Parsec (parse, ParseError, string)
 
@@ -9,6 +10,7 @@ main :: IO ()
 main = do
     hspec lexerSpec
     hspec parserSpec
+    hspec irSpec
     hspec codegenSpec
 
 isError :: Either a b -> Bool
@@ -22,6 +24,12 @@ codegenSpec = do
         it "generates a trivial module" $ do
             generatedModule <- generate Codegen.mod
             generatedModule `shouldNotSatisfy` isError
+
+irSpec :: Spec
+irSpec = do
+    describe "root" $ do
+        it "doesn't fail, given an empty AST" $ do
+            IR.fromParseTree (Root []) `shouldNotSatisfy` isError
 
 parserSpec :: Spec
 parserSpec = do

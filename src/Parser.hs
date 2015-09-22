@@ -2,7 +2,7 @@ module Parser
     ( Parser.root
     , Parser.stmts
     , Parser.expr
-    , Parser.ParseTree (Assign, Func, Arg, Call, If, Id, Num)
+    , Parser.ParseTree (Root, Assign, Func, Arg, Call, If, Id, Num)
     ) where
 
 import Control.Applicative

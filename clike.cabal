@@ -15,7 +15,7 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Lexer, Parser, Codegen
+  exposed-modules:     Lexer, Parser, IR, Codegen
   build-depends:       base >= 4.6 && < 5
                      , parsec
                      , llvm-general
