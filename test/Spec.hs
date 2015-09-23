@@ -35,7 +35,7 @@ parserSpec :: Spec
 parserSpec = do
     describe "root" $ do
         it "parses a sample program" $
-            parse root "(test)" "value; value2;" `shouldNotSatisfy` isError
+            parse root "(test)" "let value = 1; let main = fn() {};" `shouldNotSatisfy` isError
         it "fails even when the program is invalid on the first token" $
             parse root "(test)" "}" `shouldSatisfy` isError
     describe "assign" $ do

@@ -21,7 +21,7 @@ data ParseTree = Root [ParseTree]
                deriving (Show, Eq)
 
 root :: CharParser () ParseTree
-root = Root <$> stmts <* eof
+root = Root <$> assign `endBy` operator ";" <* eof
 
 stmts :: CharParser () [ParseTree]
 stmts = expr `endBy` operator ";"
