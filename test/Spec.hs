@@ -36,6 +36,12 @@ parserSpec = do
     describe "root" $ do
         it "parses a sample program" $
             parse root "(test)" "value; value2;" `shouldNotSatisfy` isError
+    describe "assign" $ do
+        let assignParse = parse assign "(test)"
+        it "can be an assignment statement" $
+            assignParse "let a = b" `shouldBe` Right (Assign (Id "a") (Id "b"))
+        it "supports assigning a function" $
+            assignParse "let f = fn() {}" `shouldBe` Right (Assign (Id "f") (Func [] []))
     describe "expr" $ do
         let exprParse = parse expr "(test)"
         it "can have a bare identifier" $
@@ -44,10 +50,6 @@ parserSpec = do
             exprParse "fn () {}" `shouldBe` Right (Func [] [])
         it "can have an anonymous function with an argument" $
             exprParse "fn (arg) {expr;}" `shouldBe` Right (Func [Arg "arg"] [Id "expr"])
-        it "can be an assignment statement" $
-            exprParse "let a = b" `shouldBe` Right (Assign (Id "a") (Id "b"))
-        it "supports assigning a function" $
-            exprParse "let f = fn() {}" `shouldBe` Right (Assign (Id "f") (Func [] []))
         it "parses a function call" $
             exprParse "f()" `shouldBe` Right (Call (Id "f") [])
         it "parses successive function calls" $

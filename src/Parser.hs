@@ -1,6 +1,7 @@
 module Parser
     ( Parser.root
     , Parser.stmts
+    , Parser.assign
     , Parser.expr
     , Parser.ParseTree (Root, Assign, Func, Arg, Call, If, Id, Num)
     ) where
@@ -25,9 +26,11 @@ root = Root <$> stmts
 stmts :: CharParser () [ParseTree]
 stmts = expr `endBy` operator ";"
 
+assign :: CharParser () ParseTree
+assign = Assign <$> (reserved "let" *> (Id <$> identifier)) <*> (operator "=" *> expr)
+
 expr :: CharParser () ParseTree
 expr = Func <$> (reserved "fn" *> parens (arg `sepBy` comma)) <*> braces stmts
-    <|> Assign <$> (reserved "let" *> (Id <$> identifier)) <*> (operator "=" *> expr)
     <|> If <$> (reserved "if" *> expr) <*> braces stmts
     <|> num
     <|> call
