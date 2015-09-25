@@ -30,6 +30,9 @@ irSpec = do
     describe "root" $ do
         it "doesn't fail, given an empty AST" $ do
             IR.fromParseTree (Root []) `shouldNotSatisfy` isError
+    describe "topLevel" $ do
+        it "handles assignment statements" $
+            IR.topLevel [Assign (Id "value") (Num 3)] `shouldBe` Right [IR.Assign "value" (IR.Int 3)]
 
 parserSpec :: Spec
 parserSpec = do
