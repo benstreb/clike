@@ -12,6 +12,7 @@ import LLVM.General.AST.Type as Type
 import LLVM.General.Context
 import LLVM.General.Module as CModule
 import LLVM.General.Target
+import qualified IR
 
 generate :: AST.Module -> IO (Either String ByteString)
 generate m = withContext $ \context ->
@@ -22,17 +23,20 @@ generate m = withContext $ \context ->
         targetedModule cmodule = joinExcept $ withHostTargetMachine $ \target ->
             runExceptT $ moduleObject target cmodule
 
-ret :: Integer -> Terminator
-ret n = Ret (Just (ConstantOperand (Int 64 n))) []
+constValue :: IR.Value -> Constant
+constValue (IR.Int n) = Int 64 n
 
-block :: BasicBlock
-block = BasicBlock (Name "block") [] (Do $ ret 0)
+ret :: IR.Value -> Terminator
+ret n = Ret (Just (ConstantOperand (constValue n))) []
+
+block :: IR.Value -> BasicBlock
+block retValue = BasicBlock (Name "block") [] (Do $ ret retValue)
 
 func :: Definition
 func = GlobalDefinition $ functionDefaults
     { Global.returnType = Type.i32
     , Global.name = Name "func"
-    , Global.basicBlocks = [block]
+    , Global.basicBlocks = [block $ IR.Int 0]
     }
 
 mod :: AST.Module
