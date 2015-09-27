@@ -4,6 +4,8 @@ module Parser
     , Parser.assign
     , Parser.expr
     , Parser.ParseTree (Root, Assign, Func, Arg, Call, If, Id, Num)
+    , Parser.args
+    , Parser.body
     ) where
 
 import Control.Applicative
