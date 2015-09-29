@@ -1,11 +1,11 @@
 module Parser
     ( Parser.root
     , Parser.stmts
+    , Parser.stmt
+    , Parser.return_
     , Parser.assign
     , Parser.expr
-    , Parser.ParseTree (Root, Assign, Func, Arg, Call, If, Id, Num)
-    , Parser.args
-    , Parser.body
+    , Parser.ParseTree (..)
     ) where
 
 import Control.Applicative
@@ -14,6 +14,7 @@ import Lexer
 
 data ParseTree = Root [ParseTree]
                | Assign {id :: ParseTree, value :: ParseTree}
+               | Return ParseTree
                | Func {args :: [ParseTree], body :: [ParseTree] }
                | Arg String
                | Call {func :: ParseTree, args :: [ParseTree]}
@@ -26,7 +27,13 @@ root :: CharParser () ParseTree
 root = Root <$> assign `endBy` operator ";" <* eof
 
 stmts :: CharParser () [ParseTree]
-stmts = expr `endBy` operator ";"
+stmts = stmt `endBy` operator ";"
+
+stmt :: CharParser () ParseTree
+stmt = return_ <|> expr
+
+return_ :: CharParser () ParseTree
+return_ = Return <$> (reserved "return" *> expr)
 
 assign :: CharParser () ParseTree
 assign = Assign <$> (reserved "let" *> (Id <$> identifier)) <*> (operator "=" *> expr)

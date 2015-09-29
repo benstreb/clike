@@ -50,6 +50,10 @@ parserSpec = do
             assignParse "let a = b" `shouldBe` Right (Assign (Id "a") (Id "b"))
         it "supports assigning a function" $
             assignParse "let f = fn() {}" `shouldBe` Right (Assign (Id "f") (Func [] []))
+    describe "return" $ do
+        let returnParse = parse return_ "(test)"
+        it "can return an integer" $
+            returnParse "return 3" `shouldBe` Right (Return (Num 3))
     describe "expr" $ do
         let exprParse = parse expr "(test)"
         it "can have a bare identifier" $
