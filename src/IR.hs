@@ -18,12 +18,15 @@ data AST = Root
 data TopLevel = TopLevel String Value
             deriving (Eq, Show)
 
-data Stmt = Assign String Value
+data Block = Bind Name Value
           deriving (Eq, Show)
 
 data Value = Int Integer
-           | Func { body :: [Stmt] }
+           | Func { body :: [Block] }
            deriving (Eq, Show)
+
+data Name = Name String
+          deriving (Eq, Show)
 
 fromParseTree :: Parser.ParseTree -> Either String AST
 fromParseTree parseTree = Right Root
