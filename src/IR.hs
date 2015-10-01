@@ -2,6 +2,8 @@ module IR
     ( AST( Root )
     , TopLevel( TopLevel )
     , Value( Int, Func )
+    , Block( Block )
+    , BlockEnd( Ret )
     , fromParseTree
     , topLevel
     , body
@@ -18,11 +20,17 @@ data AST = Root
 data TopLevel = TopLevel String Value
             deriving (Eq, Show)
 
-data Block = Bind Name Value
+data Block = Block [Stmt] BlockEnd
+           deriving (Eq, Show)
+
+data BlockEnd = Ret Value
+              deriving (Eq, Show)
+
+data Stmt = Bind Name Value
           deriving (Eq, Show)
 
 data Value = Int Integer
-           | Func { body :: [Block] }
+           | Func { body :: Block }
            deriving (Eq, Show)
 
 data Name = Name String
@@ -37,6 +45,9 @@ topLevel assigns = forM assigns matchAssign
         matchAssign :: Parser.ParseTree -> Either String IR.TopLevel
         matchAssign (Parser.Assign (Parser.Id name) valueTree) = case valueTree of
             Parser.Num n -> return (IR.TopLevel name (Int n))
-            Parser.Func _ _ -> return (IR.TopLevel name (IR.Func $ []))
+            Parser.Func _ body -> IR.TopLevel name <$> IR.Func <$> stmts body
             _ -> throwError "Not Implemented Yet: Unsupported LHS type"
         matchAssign _ = throwError "ICE: Malformed assignment statement"
+
+stmts :: [Parser.ParseTree] -> Either String IR.Block
+stmts tree = Right $ Block [] $ Ret $ Int 0

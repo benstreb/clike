@@ -35,7 +35,7 @@ irSpec = do
             IR.topLevel [Assign (Id "value") (Num 3)] `shouldBe` Right [IR.TopLevel "value" (IR.Int 3)]
         it "handles assignments of trivial functions" $
             IR.topLevel [Assign (Id "f") (Func {args=[], body=[]})]
-                `shouldBe` Right [IR.TopLevel "f" (IR.Func {IR.body=[]})]
+                `shouldBe` Right [IR.TopLevel "f" (IR.Func {IR.body=IR.Block [] $ IR.Ret $ IR.Int 0})]
 
 parserSpec :: Spec
 parserSpec = do
