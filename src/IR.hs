@@ -41,12 +41,12 @@ fromParseTree :: Parser.ParseTree -> Either String AST
 fromParseTree parseTree = Right Root
 
 topLevel :: [Parser.ParseTree] -> Either String [TopLevel]
-topLevel assigns = forM assigns matchAssign
-    where
-        matchAssign :: Parser.ParseTree -> Either String IR.TopLevel
-        matchAssign (Parser.Assign (Parser.Id name) valueTree) = IR.TopLevel name <$> value valueTree
-        matchAssign (Parser.Assign _ _) = throwError "ICE: expected an identifier on the left hand side"
-        matchAssign _ = throwError "ICE: expected only assignment statements at the top level"
+topLevel assigns = forM assigns (assign TopLevel)
+
+assign :: (String -> Value -> a) -> Parser.ParseTree -> Either String a
+assign assignType (Parser.Assign (Parser.Id name) valueTree) = assignType name <$> value valueTree
+assign assignType (Parser.Assign _ _) = throwError "ICE: expected an identifier on the left hand side"
+assign _ _ = throwError "ICE: expected assignment statment"
 
 value :: Parser.ParseTree -> Either String Value
 value (Parser.Num n) = return $ Int n
