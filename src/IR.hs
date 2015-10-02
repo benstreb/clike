@@ -6,6 +6,7 @@ module IR
     , BlockEnd( Ret )
     , fromParseTree
     , topLevel
+    , value
     , body
     )
 where
@@ -43,11 +44,14 @@ topLevel :: [Parser.ParseTree] -> Either String [TopLevel]
 topLevel assigns = forM assigns matchAssign
     where
         matchAssign :: Parser.ParseTree -> Either String IR.TopLevel
-        matchAssign (Parser.Assign (Parser.Id name) valueTree) = case valueTree of
-            Parser.Num n -> return (IR.TopLevel name (Int n))
-            Parser.Func _ body -> IR.TopLevel name <$> IR.Func <$> stmts body
-            _ -> throwError "Not Implemented Yet: Unsupported LHS type"
-        matchAssign _ = throwError "ICE: Malformed assignment statement"
+        matchAssign (Parser.Assign (Parser.Id name) valueTree) = IR.TopLevel name <$> value valueTree
+        matchAssign (Parser.Assign _ _) = throwError "ICE: expected an identifier on the left hand side"
+        matchAssign _ = throwError "ICE: expected only assignment statements at the top level"
+
+value :: Parser.ParseTree -> Either String Value
+value (Parser.Num n) = return $ Int n
+value (Parser.Func _ body) = IR.Func <$> stmts body
+value _ = throwError "Not Implemented Yet: Unsupported LHS type"
 
 stmts :: [Parser.ParseTree] -> Either String IR.Block
 stmts tree = Right $ Block [] $ Ret $ Int 0
