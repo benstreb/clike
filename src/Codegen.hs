@@ -26,17 +26,17 @@ generate m = withContext $ \context ->
 constValue :: IR.Value -> Constant
 constValue (IR.Int n) = Int 64 n
 
-ret :: IR.Value -> Terminator
-ret n = Ret (Just (ConstantOperand (constValue n))) []
+ret :: IR.BlockEnd -> Terminator
+ret (IR.Ret n) = Ret (Just (ConstantOperand (constValue n))) []
 
-block :: IR.Value -> BasicBlock
-block retValue = BasicBlock (Name "block") [] (Do $ ret retValue)
+block :: IR.Block -> BasicBlock
+block (IR.Block _ end) = BasicBlock (Name "block") [] (Do $ ret end)
 
 func :: Definition
 func = GlobalDefinition $ functionDefaults
     { Global.returnType = Type.i32
     , Global.name = Name "func"
-    , Global.basicBlocks = [block $ IR.Int 0]
+    , Global.basicBlocks = [block $ IR.Block [] $ IR.Ret $ IR.Int 0]
     }
 
 mod :: AST.Module
