@@ -32,12 +32,21 @@ ret (IR.Ret n) = Ret (Just (ConstantOperand (constValue n))) []
 block :: IR.Block -> BasicBlock
 block (IR.Block _ end) = BasicBlock (Name "block") [] (Do $ ret end)
 
+global :: IR.TopLevel -> Definition
+global (IR.TopLevel name value) = GlobalDefinition $ case value of
+    IR.Func blocks -> functionDefaults
+        { Global.returnType = Type.i32
+        , Global.name = Name name
+        , Global.basicBlocks = [block $ IR.Block [] $ IR.Ret $ IR.Int 0]
+        }
+    IR.Int _ -> globalVariableDefaults
+        { Global.name = Name name
+        , Global.initializer = Just $ constValue value
+        , Global.type' = Type.IntegerType 64
+        }
+
 func :: Definition
-func = GlobalDefinition $ functionDefaults
-    { Global.returnType = Type.i32
-    , Global.name = Name "func"
-    , Global.basicBlocks = [block $ IR.Block [] $ IR.Ret $ IR.Int 0]
-    }
+func = global $ IR.TopLevel "func" $ IR.Func $ IR.Block [] $ IR.Ret $ IR.Int 0
 
 mod :: AST.Module
 mod = defaultModule
