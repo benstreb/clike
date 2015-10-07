@@ -34,10 +34,10 @@ block (IR.Block _ end) = BasicBlock (Name "block") [] (Do $ ret end)
 
 global :: IR.TopLevel -> Definition
 global (IR.TopLevel name value) = GlobalDefinition $ case value of
-    IR.Func blocks -> functionDefaults
+    IR.Func body -> functionDefaults
         { Global.returnType = Type.i32
         , Global.name = Name name
-        , Global.basicBlocks = [block $ IR.Block [] $ IR.Ret $ IR.Int 0]
+        , Global.basicBlocks = [block body]
         }
     IR.Int _ -> globalVariableDefaults
         { Global.name = Name name
